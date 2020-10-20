@@ -1,0 +1,1 @@
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
