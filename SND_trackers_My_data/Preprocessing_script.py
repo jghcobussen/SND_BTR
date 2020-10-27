@@ -152,8 +152,8 @@ def reading_reduced_pkl_files(n_steps,processed_file_path):
 params = Parameters("4X0")
 
 # Path to the raw Data root file and the pickle file
-filename = "/home/debryas/DS5/DS5.root"
-loc_of_pkl_file = "/home/cobussen/DS5/ship_tt_processed_data_test"
+filename = "/dcache/bfys/jcobus/DS5.root"
+loc_of_pkl_file = "/project/bfys/jcobus/SND_BTR/DS5/ship_tt_processed_data_test"
 processed_file_path = os.path.expandvars(loc_of_pkl_file)
 name_of_angle_file = "results/Angle_histo.root"
 name_of_red_dim_hist = "results/XY_histo.root"
@@ -346,7 +346,7 @@ if(args.step=="step5"):
 
         ratio.append(100*loose_hit/hit)
         
-    print("Noisy enent: ", noisy_events_index)
+    print("Noisy event: ", noisy_events_index)
 
     print("Mean ratio: ", np.mean(ratio))
 

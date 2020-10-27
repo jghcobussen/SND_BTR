@@ -77,7 +77,7 @@ nb_of_plane = len(params.snd_params[params.configuration]["TT_POSITIONS"])
 
 # True value of NRJ/dist for each true electron event
 y = reindex_y_full[["E"]]
-NORM = 1. / 100
+NORM = 1. / 400
 y["E"] *= NORM
 
 y_test = reindex_y_full[["E"]]
@@ -93,33 +93,40 @@ train_indeces, test_indeces_raw, _, _ = train_test_split(indeces, indeces, train
 
 # Break test data into parts
 test_indeces_1, test_indeces_2, test_indeces_3, test_indeces_4 = [], [], [], []
-TrueE_1, TrueE_2, TrueE_3, TrueE_4 = [], [], [], []
 
 for i in range (0, len(test_indeces_raw)):
     index = test_indeces_raw[i]
     row = y_test.loc[index]
     if 200 <= row[0] and row[0] < 250:
         test_indeces_1.append(index)
-        TrueE_1.append(row[0])
     elif 250 <= row[0] and row[0] < 300:
         test_indeces_2.append(index)
-        TrueE_2.append(row[0])
     elif 300 <= row[0] and row[0] < 350:
         test_indeces_3.append(index)
-        TrueE_3.append(row[0])
     elif 350 <= row[0] and row[0] <= 400:
         test_indeces_4.append(index)
-        TrueE_4.append(row[0])
 
 print(len(test_indeces_1))
 print(len(test_indeces_2))
 print(len(test_indeces_3))
 print(len(test_indeces_4))
 
-
+TrueE_test_all = y["E"][test_indeces_raw]
+np.save("TrueE_test_norm1_all.npy", TrueE_test_all)
+TrueE_test_1 = y["E"][test_indeces_1]
+np.save("TrueE_test_norm1_0.npy", TrueE_test_1)
+TrueE_test_2 = y["E"][test_indeces_2]
+np.save("TrueE_test_norm1_1.npy", TrueE_test_2)
+TrueE_test_3 = y["E"][test_indeces_3]
+np.save("TrueE_test_norm1_2.npy", TrueE_test_3)
+TrueE_test_4 = y["E"][test_indeces_4]
+np.save("TrueE_test_norm1_3.npy", TrueE_test_4)
 
 #batch_size = 512
 batch_size = 150
+
+test_dataset_all = MyDataset(reindex_TT_df, y, params, test_indeces_raw, n_filters=nb_of_plane)
+test_batch_gen_all = torch.utils.data.DataLoader(test_dataset_all, batch_size=batch_size, shuffle=False, num_workers=0)
 
 test_dataset_1 = MyDataset(reindex_TT_df, y, params, test_indeces_1, n_filters=nb_of_plane)
 test_batch_gen_1 = torch.utils.data.DataLoader(test_dataset_1, batch_size=batch_size, shuffle=False, num_workers=0)
@@ -140,15 +147,15 @@ y_score = []
 
 test_batch_gen_array = [test_batch_gen_1, test_batch_gen_2, test_batch_gen_3, test_batch_gen_4]
 
-net = torch.load("9X0_file/" + str(39) + "_9X0_coordconv.pt")
+net = torch.load("9X0_file/" + str(39) + "_9X0_coordconv_norml1.pt")
 
 preds_0, preds_1, preds_2, preds_3 = [], [], [], []
 preds_list = [preds_0, preds_1, preds_2, preds_3]
+
 for j in range (0, 4):
     with torch.no_grad():
         for (X_batch, y_batch) in test_batch_gen_array[j]:
             preds_list[j].append(net.predict(X_batch))
         ans = np.concatenate([p.detach().cpu().numpy() for p in preds_list[j]])
-        np.save("PredE_file/" + str(39) + "_PredE_test_ " + str(j) + ".npy",ans[:, 0])
+        np.save("PredE_file/" + str(39) + "_PredE_test_norm1_" + str(j) + "all.npy",ans[:, 0])
         print("Save Prediction for batch "+ str(j))
-

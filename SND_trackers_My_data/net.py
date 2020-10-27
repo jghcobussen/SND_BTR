@@ -54,27 +54,14 @@ class SNDNet(nn.Module):
         X_batch = X_batch.to(self.device)
         y_batch = y_batch.to(self.device)
         logits = self.model(X_batch)
-        loss_tensor = F.l1_loss(logits, y_batch, reduction = 'none')
-        #print("type: " + str(type(loss_tensor)))
-        size = list(y_batch.size())
-        #print(size)
-        norm_loss_list = []
-        for i in range(0, size[0]):
-            for j in range (0, size[1]):
-                normalized_loss = float((loss_tensor[i][j])/(y_batch[i][j]))
-                norm_loss_list.append(normalized_loss)
-        array = np.array(norm_loss_list)
-        returnvalue = torch.from_numpy(array)
-        mean_returnvalue = returnvalue.mean()
-        final_returnvalue = mean_returnvalue.requires_grad=True
-        #print("type array: " + str(type(returnvalue)))
-        #print("type mean: " + str(type(mean_returnvalue)))
-        return mean_returnvalue
+        loss_tensor = F.smooth_l1_loss(logits, y_batch, reduction = 'none') 
+        normalized_loss = loss_tensor/(y_batch*y_batch)
+        return normalized_loss.mean()
 
-        #returnvalue = F.smooth_l1_loss(logits, y_batch).mean()
-        #print(returnvalue)
-        #print("returnvalue type: " + str(type(returnvalue)))
-        #return returnvalue
+       # returnvalue = F.smooth_l1_loss(logits, y_batch).mean()
+       # print(returnvalue)
+       # print("returnvalue type: " + str(type(returnvalue)))
+       # return returnvalue
 
     def predict(self, X_batch):
         self.model.eval()

@@ -12,13 +12,13 @@ CM_TO_MUM = 1e4
 
 
 class Parameters(object):
-    """
-    Class to store all parameters of the geometry configuration
-    """
+#    """
+#    Class to store all parameters of the geometry configuration
+#    """
     def __init__(self, configuration: str):
-        """
-        :param configuration: String of used config: 10X0, 9X0, 6X0, 5X0
-        """
+#        """
+#        :param configuration: String of used config: 10X0, 9X0, 6X0, 5X0
+#        """
         self.configuration = configuration
         with open("parameters.json", "r") as f:
             self.snd_params = json.load(f)
