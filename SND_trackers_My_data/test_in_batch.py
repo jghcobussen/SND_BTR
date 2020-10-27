@@ -114,13 +114,13 @@ print(len(test_indeces_4))
 #TrueE_test_all = y["E"][test_indeces_raw]
 #np.save("TrueE_test_norml1_all.npy", TrueE_test_all)
 TrueE_test_1 = y["E"][test_indeces_1]
-np.save("TrueE_test_norml1_0.npy", TrueE_test_1)
+np.save("TrueE_test_norm_l1_0.npy", TrueE_test_1)
 TrueE_test_2 = y["E"][test_indeces_2]
-np.save("TrueE_test_norml1_1.npy", TrueE_test_2)
+np.save("TrueE_test_norm_l1_1.npy", TrueE_test_2)
 TrueE_test_3 = y["E"][test_indeces_3]
-np.save("TrueE_test_norml1_2.npy", TrueE_test_3)
+np.save("TrueE_test_norm_l1_2.npy", TrueE_test_3)
 TrueE_test_4 = y["E"][test_indeces_4]
-np.save("TrueE_test_norml1_3.npy", TrueE_test_4)
+np.save("TrueE_test_norm_l1_3.npy", TrueE_test_4)
 
 #batch_size = 512
 batch_size = 150
@@ -147,7 +147,7 @@ y_score = []
 
 test_batch_gen_array = [test_batch_gen_1, test_batch_gen_2, test_batch_gen_3, test_batch_gen_4]
 
-net = torch.load("9X0_file/" + str(39) + "_9X0_coordconv_norm_smoothl1.pt")
+net = torch.load("9X0_file/" + str(39) + "_9X0_coordconv_norm_l1.pt")
 
 preds_0, preds_1, preds_2, preds_3 = [], [], [], []
 preds_list = [preds_0, preds_1, preds_2, preds_3]
@@ -157,5 +157,5 @@ for j in range (0, 4):
         for (X_batch, y_batch) in test_batch_gen_array[j]:
             preds_list[j].append(net.predict(X_batch))
         ans = np.concatenate([p.detach().cpu().numpy() for p in preds_list[j]])
-        np.save("PredE_file/" + str(39) + "_PredE_test_norm_smoothl1_" + str(j) + ".npy",ans[:, 0])
+        np.save(str(39) + "_PredE_test_norm_l1_" + str(j) + ".npy",ans[:, 0])
         print("Save Prediction for batch "+ str(j))

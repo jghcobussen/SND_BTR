@@ -54,8 +54,8 @@ class SNDNet(nn.Module):
         X_batch = X_batch.to(self.device)
         y_batch = y_batch.to(self.device)
         logits = self.model(X_batch)
-        loss_tensor = F.smooth_l1_loss(logits, y_batch, reduction = 'none') 
-        normalized_loss = loss_tensor/(y_batch*y_batch)
+        loss_tensor = F.l1_loss(logits, y_batch, reduction = 'none') 
+        normalized_loss = loss_tensor/(y_batch)
         return normalized_loss.mean()
 
        # returnvalue = F.smooth_l1_loss(logits, y_batch).mean()

@@ -129,7 +129,7 @@ reindex_TT_df=[]
 
 # Saving the true Energy for the test sample
 TrueE_test=y["E"][test_indeces]
-np.save("TrueE_test_norm_smoothl1.npy",TrueE_test)
+np.save("TrueE_norm_l1.npy",TrueE_test)
 
 # Creating the network
 net = SNDNet(n_input_filters=nb_of_plane).to(device)
@@ -150,7 +150,7 @@ os.system("mkdir 9X0_file")
 #Training
 print("\nNow Trainig the network:")
 # Create a .txt file where we will store some info for graphs
-f=open("NN_performance_norm_smoothl1.txt","a")
+f=open("NN_performance_norm_l1.txt","a")
 f.write("Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)\n")
 f.close()
 
@@ -165,7 +165,7 @@ class Logger(object):
         print("  validation Energy:\t\t{:.4f} %".format(val_accuracy_1[-1]))
         #print("  validation distance:\t\t{:.4f} %".format(val_accuracy_2[-1]))
 
-        f=open("NN_performance_norm_smoothl1.txt","a")
+        f=open("NN_performance_norm_l1.txt","a")
         f.write("{};{:.3f};".format(epoch + 1, time.time() - start_time))
         f.write("\t{:.6f};".format(train_loss[-1]))
         f.write("\t\t{:.4f}\n".format(val_accuracy_1[-1]))
@@ -208,7 +208,7 @@ def run_training(lr, num_epochs, opt):
 
             #Saving network for each 10 epoch
             if (epoch + 1) % 10 == 0:
-                with open("9X0_file/" + str(epoch) + "_9X0_coordconv_norm_smoothl1.pt", 'wb') as f:
+                with open("9X0_file/" + str(epoch) + "_9X0_coordconv_norm_l1.pt", 'wb') as f:
                     torch.save(net, f)       
                 lr = lr / 2
                 opt = torch.optim.Adam(net.model.parameters(), lr=lr)
@@ -224,12 +224,12 @@ run_training(lr, num_epochs, opt)
 os.system("mkdir PredE_file")
 
 for i in [9, 19, 29, 39]:
-    net = torch.load("9X0_file/" + str(i) + "_9X0_coordconv_norm_smoothl1.pt")
+    net = torch.load("9X0_file/" + str(i) + "_9X0_coordconv_norm_l1.pt")
     preds = []
     with torch.no_grad():
         for (X_batch, y_batch) in test_batch_gen:
             preds.append(net.predict(X_batch))
     ans = np.concatenate([p.detach().cpu().numpy() for p in preds])
-    np.save("PredE_file/" + str(i) + "_PredE_test_norm_smoothl1.npy",ans[:, 0])
+    np.save(str(i) + "_PredE_norm_l1.npy",ans[:, 0])
     print("Save Prediction for epoch "+ str(i))
     print("Code is done")
