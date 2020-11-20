@@ -1,0 +1,98 @@
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+1;688.235;	0.055857;		0.2343
+2;634.932;	0.046171;		0.0442
+3;626.081;	0.044945;		1.0426
+4;624.241;	0.043869;		0.0685
+5;624.324;	0.043373;		0.0315
+6;630.224;	0.043118;		0.2222
+7;627.888;	0.042675;		0.2550
+8;625.435;	0.042494;		0.4266
+9;628.398;	0.042054;		0.2527
+10;624.434;	0.042615;		0.2458
+11;637.628;	0.040502;		0.0219
+12;633.475;	0.040225;		0.4977
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+1;687.668;	0.064663;		0.0051
+2;643.338;	0.047755;		0.0247
+3;630.429;	0.046424;		0.0302
+4;627.682;	0.044997;		0.0075
+5;624.963;	0.043304;		0.0017
+6;627.349;	0.042715;		0.0435
+7;625.829;	0.042439;		0.0167
+8;627.124;	0.042926;		0.0510
+9;624.976;	0.042411;		0.0074
+10;627.173;	0.042551;		0.0058
+11;629.534;	0.040421;		0.0013
+12;632.221;	0.039915;		0.0417
+13;630.502;	0.039261;		0.0013
+14;632.620;	0.039042;		0.0013
+15;620.584;	0.038749;		0.0088
+16;635.972;	0.039157;		0.0052
+17;627.619;	0.038584;		0.0232
+18;628.736;	0.038510;		0.0029
+19;634.979;	0.038711;		0.0019
+20;631.946;	0.038760;		0.0137
+21;627.931;	0.038026;		0.0012
+22;630.036;	0.038153;		0.0261
+23;627.332;	0.038024;		0.0013
+24;628.230;	0.037963;		0.0022
+25;628.728;	0.038037;		0.0034
+26;642.854;	0.038209;		0.0051
+27;626.743;	0.037844;		0.0252
+28;621.913;	0.038022;		0.0014
+29;627.052;	0.037888;		0.0043
+30;632.518;	0.037967;		0.0032
+31;628.070;	0.037739;		0.0071
+32;634.236;	0.037466;		0.0016
+33;625.740;	0.037630;		0.0043
+34;628.324;	0.037609;		0.0013
+35;634.018;	0.037643;		0.0028
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+1;54.635;	0.152441;		0.0041
+2;54.045;	0.061394;		0.0031
+3;54.032;	0.058008;		0.0090
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+1;50.607;	0.474877;		0.1856
+2;50.283;	0.474851;		0.1909
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+1;678.402;	1.150586;		0.8270
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+1;38.806;	1.387665;		1.1816
+2;38.461;	1.388040;		1.1799
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+1;40.482;	0.742846;		0.3560
+2;40.439;	0.742706;		0.3547
+3;40.900;	0.742393;		0.3548
+4;41.007;	0.743286;		0.3579
+5;40.680;	0.742836;		0.3563
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+1;37.725;	0.901114;		0.5073
+2;36.840;	0.900858;		0.5039
+3;36.508;	0.901021;		0.5048
+4;36.678;	0.901412;		0.5093
+5;36.595;	0.900978;		0.5059
+Epoch/Time it took (s)/Loss/Validation energy (%)/Validation distance (%)
+1;38.282;	0.930090;		0.6086
+2;36.937;	0.930833;		0.6244
+3;37.510;	0.930551;		0.6176
+4;38.204;	0.930059;		0.6084
+5;38.523;	0.930279;		0.6110
+1;37.224;	2.041976;		2.8055
+2;36.825;	2.042524;		2.8697
+3;37.448;	2.042651;		2.8645
+4;38.080;	2.042029;		2.8478
+5;38.122;	2.042167;		2.8579

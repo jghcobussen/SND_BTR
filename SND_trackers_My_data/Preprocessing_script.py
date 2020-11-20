@@ -17,7 +17,9 @@ import os
 import argparse
 from ROOT import TH1F, TFile
 # Turn off interactive plotting: for long run it makes screwing up everything
-#plt.ioff()
+plt.ioff()
+
+j = 13
 
 # ---------------------------------------------------- Barycenter fonction -------------------------------------------------------------------------------------------------
 
@@ -38,8 +40,8 @@ def compute_barycenter_of_event(event_data, params):
     # printing the first and the second max element in nb_of_hit_per_plane
     cp=list(nb_of_hit_per_plane)
     cp.sort()
-    print("cp looks like:")
-    print(cp)
+    #print("cp looks like:")
+    #print(cp)
     # If too many few events, all the barycenters are at the center of the planes
     if (cp[-2] <= 2) ^ (cp[-1] <= 2):
         if (cp[-1] <= 2):
@@ -74,8 +76,8 @@ def compute_barycenter_of_event(event_data, params):
                    & (event_data["Z"] <= params.snd_params[params.configuration]["TT_POSITIONS"][index_2max_nb_of_hit_per_plane][1]))
 
       barycenter_ref = []
-      barycenter_ref.append([ np.mean(event_data["X"][bool_max_plane]),np.mean(event_data["Y"][bool_max_plane]),z_plane[index_max_nb_of_hit_per_plane] ])
-      barycenter_ref.append([np.mean(event_data["X"][bool_2max_plane]) ,np.mean(event_data["Y"][bool_2max_plane]) ,z_plane[index_2max_nb_of_hit_per_plane] ])
+      barycenter_ref.append([ np.mean(event_data["X"][bool_max_plane]), np.mean(event_data["Y"][bool_max_plane]), z_plane[index_max_nb_of_hit_per_plane] ])
+      barycenter_ref.append([np.mean(event_data["X"][bool_2max_plane]), np.mean(event_data["Y"][bool_2max_plane]), z_plane[index_2max_nb_of_hit_per_plane] ])
 
       #compute the barycenter of the other one by interpolating a line between the first 2 barycenter computed
       for i in range(nb_of_plane):
@@ -109,6 +111,8 @@ def reading_pkl_files(n_steps,processed_file_path):
         chunklist_y_full.append(pd.read_pickle(os.path.join(outpath, "y_cleared.pkl"))) # add all the y_cleared.pkl files read_pickle and add to the chunklist_y_full list
         reindex_TT_df = pd.concat([reindex_TT_df,chunklist_TT_df[i+2]], ignore_index=True)
         reindex_y_full = pd.concat([reindex_y_full,chunklist_y_full[i+2]], ignore_index=True)
+    #print("length of TT_df = " + str(len(reindex_TT_df)))
+    #print("length of y_full = " + str(len(reindex_y_full)))
 
     #reset empty space
     chunklist_TT_df = []
@@ -149,18 +153,18 @@ def reading_reduced_pkl_files(n_steps,processed_file_path):
 
 # Here we choose the 4X0 geometry, which correspond to SND@LHC pilot run
 # You need to change the X/Y half DIM in the .json file to 26.0 and 21.5
-params = Parameters("4X0")
+params = Parameters("SNDatLHC2")
 
 # Path to the raw Data root file and the pickle file
-filename = "/dcache/bfys/jcobus/DS5.root"
-loc_of_pkl_file = "/project/bfys/jcobus/SND_BTR/DS5/ship_tt_processed_data_test"
+filename = "/dcache/bfys/jcobus/nue_CCDIS/nue_CCDIS_0to200kevents.root"
+loc_of_pkl_file = "/dcache/bfys/jcobus/nue_CCDIS/0to200k/new"
 processed_file_path = os.path.expandvars(loc_of_pkl_file)
 name_of_angle_file = "results/Angle_histo.root"
 name_of_red_dim_hist = "results/XY_histo.root"
 
 # Usualy, Data file is too large to be read in one time, that the reason why we read it by "chunk" of step_size events
-step_size = 100    # number of event in a chunk
-file_size = 200  # number of events to be analyse. Maximum number for DS5.root is 200'000
+step_size = 5000    # number of event in a chunk
+file_size = 200000  # number of events to be analyse. Maximum number for DS5.root is 200'000
 
 n_steps = int(file_size / step_size) # number of chunks
 nb_of_plane = len(params.snd_params[params.configuration]["TT_POSITIONS"])
@@ -171,10 +175,9 @@ args = parser.parse_args()
 
 # results of step4
 reduced_dimension = []
-reduced_dimension.append(7.985957990057633)
-reduced_dimension.append(7.711481851480118)
-
-params_reduced = Parameters_reduced("4X0")
+reduced_dimension.append(7.1258038621809145) # Reduced dimension for 3.5*stdev
+reduced_dimension.append(7.028394286363015)  # Reduced dimension for 3.5*stdev
+params_reduced = Parameters_reduced("SNDatLHC2")
 
 # ----------------------------------------- PRODUCE THE tt_cleared.pkl & y_cleared.pkl IN ship_tt_processed_data/ FOLDER -------------------------------------------------
 if(args.step=="step1"):
@@ -183,10 +186,14 @@ if(args.step=="step1"):
     # It is reading and analysing data by chunk instead of all at the time (memory leak problem)
     print("\nProducing the tt_cleared.pkl & y_cleared.pkl files by chunk")
     data_preprocessor = DataPreprocess(params)
-    os.system("mkdir -p {}".format(processed_file_path)) # create a directory ship_tt_processed_data where to store the data 
-    for i in tqdm(range(0,n_steps)):  # tqdm: make your loops show a progress bar in terminal
-        raw_chunk = data_preprocessor.open_shower_file(filename, start=i*step_size, stop=(i+1)*step_size) # opening data by chunk 
+    os.system("mkdir {}".format(processed_file_path)) # create a directory ship_tt_processed_data where to store the data 
+    for i in tqdm(range(0,n_steps)):
+    #for i in tqdm(range(0,n_steps)):  # tqdm: make your loops show a progress bar in terminal
+        raw_chunk = data_preprocessor.open_shower_file(filename, start=i*step_size, stop=(i+1)*step_size) # opening data by chunk
+        #print("raw_chunk looks like:")
+        #print(raw_chunk) 
         outpath = processed_file_path + "/{}".format(i)
+        #print("length of raw_chunk is: " + str(len(raw_chunk)))
         os.system("mkdir -p {}".format(outpath)) # create a directory named 'i' where to store the data files of the 100 chunk
         data_preprocessor.clean_data_and_save(raw_chunk, outpath) # create the tt_cleared.pkl and y_cleared.pkl file in each of the directory
 
@@ -196,13 +203,13 @@ if(args.step=="step2"):
     print("Step2: Display an event and compute the barycenter of each planes")
     
     reindex_TT_df, reindex_y_full = reading_pkl_files(n_steps,processed_file_path)
-    print(len(reindex_TT_df))
-    print(len(reindex_y_full))
+    #print("length of reindex_TT is: " + str(len(reindex_TT_df)))
+    #print("length of reindex_y_full is: " + str(len(reindex_y_full)))
 
     #----------------------------------------- Ploting figure of the 6 component of TT_df --------------------------------------------------------------------------------------
 
     #index of the event you want to plot the signal
-    index=7
+    index=20
 
     response = digitize_signal(reindex_TT_df.iloc[index], params=params, filters=nb_of_plane)
     print("Response shape:",response.shape) # gives (6,150,185) for resolution =700 and (6,525,645) for resolution =200 and (6, 75, 93) for resolution= 1400 // (6, 724, 865), res 1050 
@@ -216,8 +223,8 @@ if(args.step=="step2"):
 
     barycenter = compute_barycenter_of_event(reindex_TT_df.iloc[index], params)
     print(barycenter)
-    print("reindex_TT looks like: ")
-    print(reindex_TT_df.iloc[index])
+    #print("reindex_TT looks like: ")
+    #print(reindex_TT_df.iloc[index])
 
 # --------------------------------------------------------Compute the angle of all the events----------------------------------------------------------------
 
@@ -230,8 +237,8 @@ if(args.step=="step3"):
     print("\nCompute the angle of all the events")
     from numpy.linalg import norm
 
-    histRTheta = TH1F('histRTheta', 'Angle of electron', 100, -1, 11)
-    histCTheta = TH1F('histCTheta', 'Computed angle of electron', 100, -1, 50)
+    histRTheta = TH1F('histRTheta', 'Angle of neutrino', 100, -1, 11)
+    histCTheta = TH1F('histCTheta', 'Computed angle of neutrino', 100, -1, 50)
     histDTheta = TH1F('histDTheta', 'Delta angle', 100, -11, 50)
 
     THETA = []
@@ -299,8 +306,8 @@ if(args.step=="step4"):
     myfile.Close()
     
     reduced_dimension = []
-    reduced_dimension.append(3*histX_bary.GetStdDev())
-    reduced_dimension.append(3*histY_bary.GetStdDev())
+    reduced_dimension.append(3.5*histX_bary.GetStdDev())
+    reduced_dimension.append(3.5*histY_bary.GetStdDev())
 
     print("Reduced dimension: ",reduced_dimension)
     print("\n Now you can enter those values in the reduced_dimension vector (line 170 of Preprocessing_script.py) and in the parameters_reduced.json file")
@@ -372,13 +379,13 @@ if(args.step=="step6"):
 
     print("Step6: Producing the tt_cleared_reduced.pkl files by chunk in " + loc_of_pkl_file)
     
-    reindex_TT_df, reindex_y_full = reading_pkl_files(n_steps,processed_file_path)
+    reindex_TT_df, reindex_y_full = reading_pkl_files(n_steps, processed_file_path)
     index=0
-    for h in tqdm(range(0,n_steps)):
+    for h in tqdm(range(0,n_steps)): # was n_steps
         List_vector = []
         outpath = processed_file_path + "/{}".format(h)
         len_of_tt_cleared = len(pd.read_pickle(os.path.join(outpath, "tt_cleared.pkl")))
-        for i in range(len_of_tt_cleared):
+        for i in range(len_of_tt_cleared): ### was len_of_tt_cleared
             barycenter = compute_barycenter_of_event(reindex_TT_df.iloc[i+index], params)
             bool_XY_plane= [False for j in range(len(reindex_TT_df.iloc[i+index]["Z"]))]
             X_position_bary = np.zeros(len(reindex_TT_df.iloc[i+index]['X']))
@@ -414,9 +421,9 @@ if(args.step=="step6"):
                 'ELoss': reindex_TT_df.iloc[i+index]['ELoss'][bool_XY_plane]
             }
             List_vector.append(TT_resp)
-
         tt_cleared_reduced = pd.DataFrame(List_vector)
-        tt_cleared_reduced.to_pickle(os.path.join(outpath, "tt_cleared_reduced.pkl"))
+        #print(tt_cleared_reduced['X']) ### added
+        tt_cleared_reduced.to_pickle(os.path.join(outpath, "tt_cleared_reduced.pkl"))  ### commented
         index = index+len_of_tt_cleared
 
 # ----------------------------------------------------------Compute the dimension of the reindex_TT_df_reduced image for the net.py-------------------------------------
@@ -428,7 +435,7 @@ if(args.step=="step7"):
 
     #  !!!!!!!!!!!!!!!!!! CHANGE THE PARAMETER FILE FOR X AND Y DIMENSION  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     #index of the event you want to plot the signal
-    index=7
+    index=10
     response = digitize_signal(reindex_TT_df_reduced.iloc[index], params=params_reduced, filters=nb_of_plane)
     print("Response shape:",response.shape) # gives (6,150,185) for resolution =700 and (6,525,645) for resolution =200 and (6, 75, 93) for resolution= 1400 // (6, 724, 865), res 1050 
     plt.figure(figsize=(18,nb_of_plane))
@@ -436,3 +443,23 @@ if(args.step=="step7"):
         plt.subplot(1,nb_of_plane,i+1)
         plt.imshow(response[i].astype("uint8") * 255, cmap='gray')
     plt.show()
+
+if(args.step=="step8"):
+    reindex_TT_df_reduced, reindex_y_full = reading_reduced_pkl_files(n_steps, processed_file_path)
+    print("reindex_tt_df_reduced:")
+    print(len(reindex_TT_df_reduced.iloc[0]['X']))
+
+if(args.step=="step9"):
+    reindex_TT_df, reindex_y_full = reading_pkl_files(1,processed_file_path)
+    #print("reindex_TT_df")
+    #print(reindex_TT_df['X'])
+    #print(reindex_y_full.iloc[200]['Label'])
+    #print(len(reindex_TT_df['X']))
+    #print(len(reindex_y_full['Label']))
+
+#if (args.step=="step10"):
+#    reindex_TT_df, reindex_y_full = reading_pkl_files(21, processed_file_path)
+#    for i in range (0, len(reindex_y_full):
+#        reindex_y_full.iloc[i]["E"] = int(-1)
+#    reindex_y_full.to_pickle(os.path.join("/dcache/bfys/jcobus/nue_CCDIS/0to200k/new
+    

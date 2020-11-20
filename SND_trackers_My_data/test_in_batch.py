@@ -40,9 +40,11 @@ plt.ioff()
 
 # Here we choose the geometry with 9 time the radiation length
 params = Parameters_reduced("4X0")  #!!!!!!!!!!!!!!!!!!!!!CHANGE THE DIMENTION !!!!!!!!!!!!!!!!
-processed_file_path = os.path.expandvars("/project/bfys/jcobus/SND_BTR/ship_tt_processed_data") #!!!!!!!!!!!!!!!!!!!!!CHANGE THE PATH !!!!!!!!!!!!!!!!
+processed_file_path = os.path.expandvars("/dcache/bfys/jcobus/ship_tt_processed_data") #!!!!!!!!!!!!!!!!!!!!!CHANGE THE PATH !!!!!!!!!!!!!!!!
+processed_file_path_0 = os.path.expandvars("/dcache/bfys/jcobus/nue_CCDIS_0to200k/new")
+processed_file_path_1 = os.path.expandvars("/dcache/bfys/jcobus/nue_NuEElastic_0to200k")
 step_size = 5000    # size of a chunk
-file_size = 150000  # size of the BigFile.root file
+file_size = 100000  # size of the BigFile.root file
 n_steps = int(file_size / step_size) # number of chunks
 
 chunklist_TT_df = []  # list of the TT_df file of each chunk
@@ -68,6 +70,14 @@ for i in tqdm(range(n_steps-2)):  # tqdm: make your loops show a progress bar in
     reindex_TT_df = pd.concat([reindex_TT_df,chunklist_TT_df[i+2]], ignore_index=True)
     reindex_y_full = pd.concat([reindex_y_full,chunklist_y_full[i+2]], ignore_index=True)
 
+for i in tqdm(range(n_steps)):
+    j = i + 10
+    outpath = processed_file_path + "/{}".format(i)
+    chunklist_TT_df.append(pd.read_pickle(os.path.join(outpath, "t_cleared_reduced.pkl")))
+    chunklist_y_full.append(pd.read_pickle(os.path.join(outpath, "y_cleared.pkl")))
+    reindex_TT_df = pd.concat([reindex_TT_df, chunklist_TT_df[j]], ignore_index=True)
+    reindex_y_full = pd.concat([reindex_y_full, chunklist_y_full[j]], ignore_index=True)
+
 # reset to empty space
 chunklist_TT_df = []
 chunklist_y_full = []
@@ -76,9 +86,12 @@ nb_of_plane = len(params.snd_params[params.configuration]["TT_POSITIONS"])
 #---------------------------------------------------------
 
 # True value of NRJ/dist for each true electron event
-y = reindex_y_full[["E"]]
-NORM = 1. / 400
-y["E"] *= NORM
+
+y = reindex_y_full[["L"]]
+#NORM = 1. / 400
+#y["E"] *= NORM
+
+#y = reindex_y_full[["E"]]
 
 y_test = reindex_y_full[["E"]]
 
@@ -112,15 +125,15 @@ print(len(test_indeces_3))
 print(len(test_indeces_4))
 
 #TrueE_test_all = y["E"][test_indeces_raw]
-#np.save("TrueE_test_norml1_all.npy", TrueE_test_all)
-TrueE_test_1 = y["E"][test_indeces_1]
-np.save("TrueE_test_norm_l1_0.npy", TrueE_test_1)
+#np.save("TrueE_test_norm_smoothl1_all.npy", TrueE_test_all)
+TrueE_test_1 = y["Label"][test_indeces_1]
+np.save("TrueE_mse_norm_0.npy", TrueE_test_1)
 TrueE_test_2 = y["E"][test_indeces_2]
-np.save("TrueE_test_norm_l1_1.npy", TrueE_test_2)
+np.save("TrueE_mse_norm_1.npy", TrueE_test_2)
 TrueE_test_3 = y["E"][test_indeces_3]
-np.save("TrueE_test_norm_l1_2.npy", TrueE_test_3)
+np.save("TrueE_mse_norm_2.npy", TrueE_test_3)
 TrueE_test_4 = y["E"][test_indeces_4]
-np.save("TrueE_test_norm_l1_3.npy", TrueE_test_4)
+np.save("TrueE_mse_norm_3.npy", TrueE_test_4)
 
 #batch_size = 512
 batch_size = 150
@@ -147,7 +160,7 @@ y_score = []
 
 test_batch_gen_array = [test_batch_gen_1, test_batch_gen_2, test_batch_gen_3, test_batch_gen_4]
 
-net = torch.load("9X0_file/" + str(39) + "_9X0_coordconv_norm_l1.pt")
+net = torch.load("9X0_file/" + str(29) + "_9X0_coordconv_DS5_mse_norm.pt") 
 
 preds_0, preds_1, preds_2, preds_3 = [], [], [], []
 preds_list = [preds_0, preds_1, preds_2, preds_3]
@@ -157,5 +170,5 @@ for j in range (0, 4):
         for (X_batch, y_batch) in test_batch_gen_array[j]:
             preds_list[j].append(net.predict(X_batch))
         ans = np.concatenate([p.detach().cpu().numpy() for p in preds_list[j]])
-        np.save(str(39) + "_PredE_test_norm_l1_" + str(j) + ".npy",ans[:, 0])
+        np.save("PredE_mse_norm_" + str(j) + ".npy",ans[:, 0])
         print("Save Prediction for batch "+ str(j))
