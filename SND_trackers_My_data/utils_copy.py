@@ -37,7 +37,7 @@ class Parameters_reduced(object):
         :param configuration: String of used config: 10X0, 9X0, 6X0, 5X0
         """
         self.configuration = configuration
-        with open("parameters_reduced.json", "r") as f:
+        with open("parameters_reduced_DS5.json", "r") as f:
             self.snd_params = json.load(f)
         self.tt_positions_ravel = [item for sublist in self.snd_params[configuration]['TT_POSITIONS']
                 for item in sublist]

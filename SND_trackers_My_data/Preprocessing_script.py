@@ -1,7 +1,7 @@
 # --------------------------------------------------------------IMPORT AND OPTIONS FOR PREPROCESSING ----------------------------------------------------------------------
 # Import Class from utils.py & net.py file
-from utils import DataPreprocess, Parameters, Parameters_reduced
-from net import digitize_signal
+from utils_full_unreduced import DataPreprocess, Parameters, Parameters_reduced
+from net_unreduced_test import digitize_signal
 
 # Import usfull module 
 from matplotlib import pylab as plt
@@ -156,8 +156,8 @@ def reading_reduced_pkl_files(n_steps,processed_file_path):
 params = Parameters("SNDatLHC2")
 
 # Path to the raw Data root file and the pickle file
-filename = "/dcache/bfys/jcobus/nue_CCDIS/nue_CCDIS_0to200kevents.root"
-loc_of_pkl_file = "/dcache/bfys/jcobus/nue_CCDIS/0to200k/new"
+filename = "/dcache/bfys/jcobus/nue_CCDIS/nue_CCDIS_200to400kevents.root" ### "/dcache/bfys/jcobus/nue_NuEElastic/nue_NuEElastic_0to1kevents.root"
+loc_of_pkl_file = "/dcache/bfys/jcobus/nue_CCDIS/200to400k_new_5" 
 processed_file_path = os.path.expandvars(loc_of_pkl_file)
 name_of_angle_file = "results/Angle_histo.root"
 name_of_red_dim_hist = "results/XY_histo.root"
@@ -175,8 +175,8 @@ args = parser.parse_args()
 
 # results of step4
 reduced_dimension = []
-reduced_dimension.append(7.1258038621809145) # Reduced dimension for 3.5*stdev
-reduced_dimension.append(7.028394286363015)  # Reduced dimension for 3.5*stdev
+reduced_dimension.append(8.875674711505047) # Reduced dimension for 3.5*stdev
+reduced_dimension.append(8.743673618342623)  # Reduced dimension for 3.5*stdev
 params_reduced = Parameters_reduced("SNDatLHC2")
 
 # ----------------------------------------- PRODUCE THE tt_cleared.pkl & y_cleared.pkl IN ship_tt_processed_data/ FOLDER -------------------------------------------------
@@ -209,7 +209,7 @@ if(args.step=="step2"):
     #----------------------------------------- Ploting figure of the 6 component of TT_df --------------------------------------------------------------------------------------
 
     #index of the event you want to plot the signal
-    index=20
+    index= 1874
 
     response = digitize_signal(reindex_TT_df.iloc[index], params=params, filters=nb_of_plane)
     print("Response shape:",response.shape) # gives (6,150,185) for resolution =700 and (6,525,645) for resolution =200 and (6, 75, 93) for resolution= 1400 // (6, 724, 865), res 1050 
@@ -450,16 +450,88 @@ if(args.step=="step8"):
     print(len(reindex_TT_df_reduced.iloc[0]['X']))
 
 if(args.step=="step9"):
-    reindex_TT_df, reindex_y_full = reading_pkl_files(1,processed_file_path)
-    #print("reindex_TT_df")
-    #print(reindex_TT_df['X'])
-    #print(reindex_y_full.iloc[200]['Label'])
-    #print(len(reindex_TT_df['X']))
-    #print(len(reindex_y_full['Label']))
 
-#if (args.step=="step10"):
-#    reindex_TT_df, reindex_y_full = reading_pkl_files(21, processed_file_path)
-#    for i in range (0, len(reindex_y_full):
-#        reindex_y_full.iloc[i]["E"] = int(-1)
-#    reindex_y_full.to_pickle(os.path.join("/dcache/bfys/jcobus/nue_CCDIS/0to200k/new
-    
+    n_steps_inelastic = 30
+    processed_file_path_0 = "/dcache/bfys/jcobus/nue_CCDIS/0to200k_new"
+    reindex_TT_df_inelastic, reindex_y_full_inelastic = reading_pkl_files(n_steps_inelastic, processed_file_path_0)
+    print("Length of TT_df_inelastic is: " + str(len(reindex_TT_df_inelastic)))
+    print("Length of y_full_inelastic is: " + str(len(reindex_y_full_inelastic)))
+    '''
+    n_steps_elastic = 40
+    processed_file_path_1 = "/dcache/bfys/jcobus/nue_NuEElastic/0to200k_new"
+    reindex_TT_df_elastic, reindex_y_full_elastic = reading_pkl_files(n_steps_elastic, processed_file_path_1)
+    print("Length of TT_df elastic is: " + str(len(reindex_TT_df_elastic)))
+    print("Length of y_df elastic is: " + str(len(reindex_y_full_elastic)))
+    '''
+    index=8902
+   
+    #'''
+    print("X : " + str(reindex_TT_df_inelastic.iloc[index]['X']))
+    print("Y : " + str(reindex_TT_df_inelastic.iloc[index]['Y']))
+    print("Z : " + str(reindex_TT_df_inelastic.iloc[index]['Z']))
+    print("E : " + str(reindex_y_full_inelastic.iloc[index]['E']))
+    response = digitize_signal(reindex_TT_df_inelastic.iloc[index], params=params, filters=nb_of_plane)
+    print("Response shape:",response.shape) # gives (6,150,185) for resolution =700 and (6,525,645) for resolution =200 and (6, 75, 93) for resolution= 1400 // (6, 724, 865), res 1050 
+    plt.figure(figsize=(18,nb_of_plane))
+    for i in range(nb_of_plane):
+        plt.subplot(1,nb_of_plane,i+1)
+        plt.imshow(response[i].astype("uint8") * 255, cmap='gray')
+    plt.show()
+    #'''
+    '''
+    print("X : " + str(reindex_TT_df_elastic.iloc[index]['X']))
+    print("Y : " + str(reindex_TT_df_elastic.iloc[index]['Y']))
+    print("Z : " + str(reindex_TT_df_elastic.iloc[index]['Z']))
+    print("E : " + str(reindex_y_full_elastic.iloc[index]['E']))
+    response = digitize_signal(reindex_TT_df_elastic.iloc[index], params=params, filters=nb_of_plane)
+    print("Response shape:",response.shape) # gives (6,150,185) for resolution =700 and (6,525,645) for resolution =200 and (6, 75, 93) for resolution= 1400 // (6, 724, 86$    plt.figure(figsize=(18,nb_of_plane))
+    for i in range(nb_of_plane):
+        plt.subplot(1,nb_of_plane,i+1)
+        plt.imshow(response[i].astype("uint8") * 255, cmap='gray')
+    plt.show()
+    '''
+if (args.step == "step10"):
+   
+    n_steps_inelastic = 30
+    processed_file_path_0 = "/dcache/bfys/jcobus/nue_CCDIS/0to200k_new"
+    reindex_TT_df_inelastic, reindex_y_full_inelastic = reading_pkl_files(n_steps_inelastic, processed_file_path_0)
+    print("Length of TT_df_inelastic is: " + str(len(reindex_TT_df_inelastic)))
+    print("Length of y_full_inelastic is: " + str(len(reindex_y_full_inelastic)))
+
+    n_steps_elastic = 40
+    processed_file_path_1 = "/dcache/bfys/jcobus/nue_NuEElastic/0to200k_new"
+    reindex_TT_df_elastic, reindex_y_full_elastic = reading_pkl_files(n_steps_elastic, processed_file_path_1)
+    print("Length of TT_df elastic is: " + str(len(reindex_TT_df_elastic)))
+    print("Length of y_df elastic is: " + str(len(reindex_y_full_elastic)))
+
+    array_0, array_1, array_2, array_3 = [], [], [], []
+    for i in range(0, len(reindex_y_full_elastic)): 
+        energy = reindex_y_full_elastic.iloc[i]['E']
+        if energy < 1250:
+            array_0.append(energy)
+        elif energy >= 1250 and energy <= 2500:
+            array_1.append(energy)
+        elif energy >= 2500 and energy <= 3750:
+            array_2.append(energy)
+        elif energy >= 3750 and energy <= 5000:
+            array_3.append(energy)
+    print("Elastic events with energy [0, 1250] : " + str(len(array_0)))
+    print("Elastic events with energy [1250, 2500] : " + str(len(array_1)))
+    print("Elastic events with energy [2500, 3750] : " + str(len(array_2)))
+    print("Elastic events with energy [3750, 5000] : " + str(len(array_3)))
+
+    array_0, array_1, array_2, array_3 = [], [], [], []
+    for i in range(0, len(reindex_y_full_inelastic)):
+        energy = reindex_y_full_inelastic.iloc[i]['E']
+        if energy < 1250:
+            array_0.append(energy)
+        elif energy >= 1250 and energy <= 2500:
+            array_1.append(energy)
+        elif energy >= 2500 and energy <= 3750:
+            array_2.append(energy)
+        elif energy >= 3750 and energy <= 5000:
+            array_3.append(energy)
+    print("Inelastic events with energy [0, 1250] : " + str(len(array_0)))
+    print("Inelastic events with energy [1250, 2500] : " + str(len(array_1)))
+    print("Inelastic events with energy [2500, 3750] : " + str(len(array_2)))
+    print("Inelastic events with energy [3750, 5000] : " + str(len(array_3)))

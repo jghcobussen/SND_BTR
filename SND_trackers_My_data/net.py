@@ -13,7 +13,7 @@ class Flatten(nn.Module):
     def forward(self, input):
         #print("Input of Flatten() looks like:")
         #print(input.size())
-        #print("Output of Flatten looks like: ")
+        print("Output of Flatten looks like: ")
         a = (input.view(input.size(0), -1))
         #print(a.size())
         return input.view(input.size(0), -1)
@@ -45,12 +45,13 @@ class SNDNet(nn.Module):
             Block(n_input_filters, 32, pool=True),
             Block(32, 32, pool=True),
             Block(32, 64, pool=True),
-            #Block(64, 64, pool=True), ### was uncommented
-            #Block(32, 32, pool=True),
+            Block(64, 64, pool=True), ### was True
+            #Block(64, 64, pool=False),
+            #Block(64, 64, pool=True),
             #Block(128, 128, pool=False),
             Flatten(),
-            nn.Linear(1600, 1), ### was 256, 1
-            nn.Tanh() #ADDED
+            nn.Linear(256, 1), ### was 64, 1
+            #nn.Tanh() #ADDED
             #nn.Sigmoid() #ADDED
             
             
@@ -63,9 +64,9 @@ class SNDNet(nn.Module):
 
     def compute_loss(self, X_batch, y_batch):
         X_batch = X_batch.to(self.device)
-        #print("X_batch has size: " + str(X_batch.size()))
+        print("X_batch has size: " + str(X_batch.size()))
         y_batch = y_batch.to(self.device)
-        #print(len(y_batch))
+        print(len(y_batch))
         logits = self.model(X_batch)
         loss_tensor = F.mse_loss(logits, y_batch, reduction = 'none')
         #loss_tensor = F.smooth_l1_loss(logits, y_batch, reduction = 'none')
